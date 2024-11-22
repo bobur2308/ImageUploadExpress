@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= locals.title %></title>
+</head>
+<body>
+  <h1><%= locals.title %></h1>
+  <p><%= locals.body %></p>
+
+  <!-- File upload form -->
+  <form action="/upload" method="POST" enctype="multipart/form-data">
+    <label for="file">Select an image:</label>
+    <input type="file" name="file" id="file" required />
+    <button type="submit">Upload</button>
+  </form>
+</body>
+</html>
