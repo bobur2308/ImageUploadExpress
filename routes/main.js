@@ -15,7 +15,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // GET route to render the upload page
-router.get('/', async (req, res) => {
+router.get('/uploads', async (req, res) => {
   try {
     const locals = {
       title: 'Upload Image',
