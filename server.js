@@ -1,24 +1,42 @@
-require('dotenv').config();
-const express = require('express');
-const cors = require('cors');
+const express = require("express");
+const multer = require("multer");
+const path = require("path");
 
 const app = express();
 
-// Middleware setup
-app.set('view engine', 'ejs');
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// Set up Multer storage with custom filename logic
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    // Set the folder where files will be saved
+    cb(null, "uploads/");
+  },
+  filename: (req, file, cb) => {
+    // Create a custom filename using the current timestamp and file extension
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1E9);
+    const fileExtension = path.extname(file.originalname);
+    cb(null, file.fieldname + "-" + uniqueSuffix + fileExtension);
+  },
+});
 
-// Serve static files like uploaded images
-app.use('/uploads', express.static('uploads'));
+// Initialize Multer with storage configuration
+const upload = multer({ storage: storage });
 
-// Import and use the routes
-const mainRoutes = require('./routes/main');
-app.use('/', mainRoutes); // Attach all routes from main.js
+// Create the upload route that accepts multiple files
+app.post("/upload", upload.array("files", 10), (req, res) => {
+  // Handle the uploaded files
+  if (!req.files) {
+    return res.status(400).json({ message: "No files uploaded." });
+  }
+  res.json({ message: "Files uploaded successfully!", files: req.files });
+});
 
-// Start the server
-const port = process.env.PORT || 3000;
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+// Create the 'uploads' folder if it doesn't exist
+const fs = require('fs');
+const dir = './uploads';
+if (!fs.existsSync(dir)){
+    fs.mkdirSync(dir);
+}
+
+app.listen(5050, () => {
+  console.log("Server is running on port 5050");
 });
